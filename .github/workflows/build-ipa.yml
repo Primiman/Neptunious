@@ -1,0 +1,53 @@
+name: Build Neptunious IPA
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [ main ]
+
+jobs:
+  build:
+    runs-on: macos-14
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Select latest available Xcode
+        run: |
+          ls -d /Applications/Xcode*.app
+          XCODE_PATH=$(ls -d /Applications/Xcode*.app | sort -V | tail -n 1)
+          echo "Using Xcode: $XCODE_PATH"
+          sudo xcode-select -s "$XCODE_PATH/Contents/Developer"
+          xcodebuild -version
+
+      - name: Install XcodeGen
+        run: brew install xcodegen
+
+      - name: Generate Xcode project
+        run: xcodegen generate
+
+      - name: Build unsigned archive
+        run: |
+          xcodebuild \
+            -project Neptunious.xcodeproj \
+            -scheme Neptunious \
+            -configuration Release \
+            -sdk iphoneos \
+            -archivePath build/Neptunious.xcarchive \
+            CODE_SIGNING_ALLOWED=NO \
+            CODE_SIGNING_REQUIRED=NO \
+            archive
+
+      - name: Package IPA
+        run: |
+          mkdir -p build/Payload
+          cp -r build/Neptunious.xcarchive/Products/Applications/Neptunious.app build/Payload/
+          cd build
+          zip -r Neptunious.ipa Payload
+
+      - name: Upload IPA artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: Neptunious-ipa
+          path: build/Neptunious.ipa
