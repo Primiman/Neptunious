@@ -1,0 +1,33 @@
+name: Neptunious
+options:
+  bundleIdPrefix: com.sidewind.neptunious
+  deploymentTarget:
+    iOS: "17.0"
+
+targets:
+  Neptunious:
+    type: application
+    platform: iOS
+    deploymentTarget: "17.0"
+
+    sources:
+      - path: .
+
+    info:
+      path: Info.plist
+      properties:
+        UILaunchScreen: {}
+        MinimumOSVersion: "17.0"
+        UIRequiredDeviceCapabilities: [arm64]
+        UISupportedInterfaceOrientations: [UIInterfaceOrientationPortrait]
+
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.sidewind.neptunious
+        CODE_SIGNING_ALLOWED: NO
+        CODE_SIGNING_REQUIRED: NO
+        CODE_SIGN_IDENTITY: ""
+        DEVELOPMENT_TEAM: ""
+        SWIFT_VERSION: "5.0"
+        TARGETED_DEVICE_FAMILY: "1"
+        IPHONEOS_DEPLOYMENT_TARGET: "17.0"
